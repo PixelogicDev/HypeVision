@@ -24,6 +24,8 @@ HypeVision was built using all Javascript tech in a full stack soluton:<br>
 
 ### How to use
 
+- Include how to instal Tesseract on machine
+
 **_Coming Soon_**
 
 ### Contributing

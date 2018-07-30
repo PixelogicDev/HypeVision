@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pillow = "*"
 pyscreenshot = "*"
 opencv-python = "*"
+tesserocr = "*"
 
 [dev-packages]
 pylint = "*"

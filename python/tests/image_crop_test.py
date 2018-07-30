@@ -34,7 +34,7 @@ class TestImageCrop(unittest.TestCase):
             print(f'Cropping {im_file}...')
 
             # check for file
-            if os.path.isfile(im_file_path):
+            if (os.path.isfile(im_file_path)) and not (im_file == '.DS_Store'):
                 # read image
                 img = cv2.imread(im_file_path)
 
