@@ -21,12 +21,9 @@ class TestImageOCR(unittest.TestCase):
                 img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
                 # Binarize
-                thresh = cv2.threshold(
-                    img_gray_denoise, 128, 255, cv2.THRESH_OTSU)[0]
-
-                im_bw = cv2.threshold(
-                    img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
-                cv2.imwrite(im_file_path, im_bw)
+                img_bw = cv2.threshold(
+                    img_gray, 128, 255, cv2.THRESH_BINARY_INV)[1]
+                cv2.imwrite(im_file_path, img_bw)
 
                 # OCR image
                 print(tesserocr.file_to_text(im_file_path))
