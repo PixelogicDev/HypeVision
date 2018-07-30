@@ -12,12 +12,14 @@ class TestImageCrop(unittest.TestCase):
             if im_file == 'PUBG-720.png':
                 self.assertEqual(crop_h, 50)
                 self.assertEqual(crop_w, 103)
-            if im_file == 'PUBG-1080.png':
+            elif im_file == 'PUBG-1080.png':
                 self.assertEqual(crop_h, 75)
                 self.assertEqual(crop_w, 154)
-            if im_file == 'PUBG-2160.png':
+            elif im_file == 'PUBG-2160.png':
                 self.assertEqual(crop_h, 151)
                 self.assertEqual(crop_w, 308)
+            else:
+                return 'nope'
 
         width_multiplier = 0.92
         height_multiplier = 0.07
