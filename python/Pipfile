@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 pyscreenshot = "*"
 opencv-python = "*"
-tesserocr = "*"
+pytesseract = "*"
 
 [dev-packages]
 pylint = "*"

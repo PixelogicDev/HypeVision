@@ -10,19 +10,24 @@ class TestImageCrop(unittest.TestCase):
             # test for proper size
             crop_h, crop_w, _ = crop_img.shape
             if im_file == 'PUBG-720.png':
-                self.assertEqual(crop_h, 50)
-                self.assertEqual(crop_w, 103)
+                self.assertEqual(crop_h, 25)
+                self.assertEqual(crop_w, 25)
             elif im_file == 'PUBG-1080.png':
-                self.assertEqual(crop_h, 75)
-                self.assertEqual(crop_w, 154)
+                self.assertEqual(crop_h, 38)
+                self.assertEqual(crop_w, 37)
             elif im_file == 'PUBG-2160.png':
-                self.assertEqual(crop_h, 151)
-                self.assertEqual(crop_w, 308)
+                self.assertEqual(crop_h, 76)
+                self.assertEqual(crop_w, 73)
+            elif im_file == 'PUBG-4K.png':
+                self.assertEqual(crop_h, 76)
+                self.assertEqual(crop_w, 73)
             else:
                 return 'nope'
 
-        width_multiplier = 0.92
-        height_multiplier = 0.07
+        x_end_multiplier = 0.053
+        y_start_multiplier = 0.028
+        width_multiplier = 0.928
+        height_multiplier = 0.063
         im_folder_path = 'crop_test_images'
         im_folder_out_path = 'crop_test_images/crop_test_output'
 
@@ -31,10 +36,11 @@ class TestImageCrop(unittest.TestCase):
 
         for im_file in im_list:
             im_file_path = os.path.join(im_folder_path, im_file)
-            print(f'Cropping {im_file}...')
 
             # check for file
             if (os.path.isfile(im_file_path)) and not (im_file == '.DS_Store'):
+                print(f'Cropping {im_file}...')
+
                 # read image
                 img = cv2.imread(im_file_path)
 
@@ -42,9 +48,11 @@ class TestImageCrop(unittest.TestCase):
                 height, width, _ = img.shape
                 x = int(width * width_multiplier)
                 y = int(height * height_multiplier)
+                x_end = int(width - (width * x_end_multiplier))
+                y_start = int(height * y_start_multiplier)
 
                 # crop & save
-                crop_img = img[0:y, x:]
+                crop_img = img[y_start:y, x:x_end]
 
                 out_filename = f'{os.path.splitext(im_file)[0]}-cropped.png'
                 cv2.imwrite(

@@ -1,4 +1,5 @@
-import tesserocr
+import pytesseract
+from PIL import Image
 import unittest
 import cv2
 import os
@@ -6,6 +7,19 @@ import os
 
 class TestImageOCR(unittest.TestCase):
     def test_img_ocr(self):
+        def assertValue(im_file, ocr_val):
+            val = int(ocr_val)
+            if im_file == 'PUBG-720-cropped.png':
+                self.assertEqual(val, 50)
+            elif im_file == 'PUBG-1080-cropped.png':
+                self.assertEqual(val, 33)
+            elif im_file == 'PUBG-2160-cropped.png':
+                self.assertEqual(val, 46)
+            elif im_file == 'PUBG-4K-cropped.png':
+                self.assertEqual(val,  77)
+            else:
+                return 'nope'
+
         # start directory loop
         im_folder_path = 'crop_test_images/crop_test_output'
         im_list = os.listdir(im_folder_path)
@@ -16,17 +30,42 @@ class TestImageOCR(unittest.TestCase):
 
             # check for file
             if os.path.isfile(im_file_path):
-                # Convert to grayscale
+                # Read and resize image
                 img = cv2.imread(im_file_path)
-                img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
-                # Binarize
+                img_resized = cv2.resize(img, None, fx=2, fy=2,
+                                         interpolation=cv2.INTER_CUBIC)
+
+                # Blur for smoothing
+                blur = cv2.blur(img_resized, (5, 5))
+
+                # Convert to gray scale
+                img_gray = cv2.cvtColor(blur, cv2.COLOR_RGB2GRAY)
+
+                # Threshold
                 img_bw = cv2.threshold(
                     img_gray, 128, 255, cv2.THRESH_BINARY_INV)[1]
+
+                # Save final image to path for visual check
                 cv2.imwrite(im_file_path, img_bw)
 
+                # Convert to Image type from PIL
+                img_from_arr = Image.fromarray(img_bw)
+
                 # OCR image
-                print(tesserocr.file_to_text(im_file_path))
+                # MAD PROPS http://ocr7.com/
+
+                # Get data
+                data = pytesseract.image_to_data(img_from_arr,
+                                                 lang='pubg', config='outputbase digits', output_type=pytesseract.Output.DICT)
+                # Get Text & Conf
+                conf = data['conf'][4]
+                text = data['text'][4]
+                print(f'CONFIDENCE: {conf}')
+                print(f'NUM: {text}')
+
+                # Assert Test
+                assertValue(im_file, text)
 
 
 if __name__ == '__main__':
