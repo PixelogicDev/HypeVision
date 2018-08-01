@@ -46,10 +46,3 @@ class TestScreenshots(unittest.TestCase):
             print('Added screenshot to folder')
 
         do_capture_loop(take_screenshot)
-
-
-# MAD PROPS DontCallMeLateForDinner
-if __name__ == '__main__':
-    unittest.main()
-else:
-    print('Not main, not running tests.')

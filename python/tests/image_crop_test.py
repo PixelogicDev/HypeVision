@@ -60,10 +60,3 @@ class TestImageCrop(unittest.TestCase):
 
                 # run test
                 run_assert_test(crop_img)
-
-
-# MAD PROPS DontCallMeLateForDinner
-if __name__ == '__main__':
-    unittest.main()
-else:
-    print('Not main, not running tests.')

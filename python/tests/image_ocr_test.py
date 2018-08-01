@@ -7,6 +7,8 @@ import os
 
 class TestImageOCR(unittest.TestCase):
     def test_img_ocr(self):
+        im_folder_path = 'crop_test_images/crop_test_output'
+
         def assertValue(im_file, ocr_val):
             val = int(ocr_val)
             if im_file == 'PUBG-720-cropped.png':
@@ -20,8 +22,18 @@ class TestImageOCR(unittest.TestCase):
             else:
                 return 'nope'
 
+        def do_cleanup():
+            im_list = os.listdir(im_folder_path)
+
+            for im_file in im_list:
+                im_file_path = os.path.join(im_folder_path, im_file)
+                try:
+                    if os.path.isfile(im_file_path):
+                        os.unlink(im_file_path)
+                except Exception as e:
+                    print(e)
+
         # start directory loop
-        im_folder_path = 'crop_test_images/crop_test_output'
         im_list = os.listdir(im_folder_path)
 
         for im_file in im_list:
@@ -59,16 +71,12 @@ class TestImageOCR(unittest.TestCase):
                 data = pytesseract.image_to_data(img_from_arr,
                                                  lang='pubg', config='outputbase digits', output_type=pytesseract.Output.DICT)
                 # Get Text & Conf
-                conf = data['conf'][4]
-                text = data['text'][4]
+                # conf = data['conf'][4]
+                # text = data['text'][4]
                 print(f'CONFIDENCE: {conf}')
                 print(f'NUM: {text}')
 
                 # Assert Test
                 assertValue(im_file, text)
 
-
-if __name__ == '__main__':
-    unittest.main()
-else:
-    print('Not main, not running tests.')
+            do_cleanup()
