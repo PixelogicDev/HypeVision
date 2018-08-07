@@ -71,10 +71,7 @@ class TestImageOCR(unittest.TestCase):
                 data = pytesseract.image_to_data(img_from_arr,
                                                  lang='pubg', config='outputbase digits', output_type=pytesseract.Output.DICT)
                 # Get Text & Conf
-                # conf = data['conf'][4]
-                # text = data['text'][4]
-                print(f'CONFIDENCE: {conf}')
-                print(f'NUM: {text}')
+                text = data['text'][4]
 
                 # Assert Test
                 assertValue(im_file, text)
