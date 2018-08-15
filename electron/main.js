@@ -1,14 +1,33 @@
 const { app, BrowserWindow } = require('electron');
+const { exec } = require('child_process');
+const PythonShell = require('python-shell');
+const basePythonPath = '../python/python-exe';
 
 var window;
+//-- MAD PROPS DMzda --//
+exec(
+	'cd ../python && pipenv install && cd ./tests && pipenv run python ./runner.py',
+	(err, stdout, stderr) => {
+		if (err) {
+			console.log(err);
+			return;
+		}
+
+		if (stderr) {
+			console.log(stderr);
+			return;
+		}
+
+		console.log(stdout);
+	}
+);
 
 // The main.js should create windows and handle all the system events your application might encounter
-let createWindow = () => {
+const createWindow = () => {
 	window = new BrowserWindow({ width: 800, height: 600 });
-	window.loadURL('https://google.com');
+	window.loadURL('https://github.com/PixelogicDev/HypeVision');
 
 	// Window event listeners //
-
 	app.on('activate', () => {
 		// On macOS it's common to re-create a window in the app when the
 		// dock icon is clicked and there are no other windows open.
@@ -19,7 +38,9 @@ let createWindow = () => {
 	app.on('window-all-closed', () => {
 		// On macOS it is common for applications and their menu bar
 		// to stay active until the user quits explicitly with Cmd + Q
-		if (process.platform !== 'darwin') app.quit();
+		if (process.platform !== 'darwin') {
+			app.quit();
+		}
 	});
 
 	window.on('closed', () => {
