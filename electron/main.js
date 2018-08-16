@@ -1,12 +1,11 @@
 const { app, BrowserWindow } = require('electron');
 const { exec } = require('child_process');
-const PythonShell = require('python-shell');
 const basePythonPath = '../python/python-exe';
 
 var window;
 //-- MAD PROPS DMzda --//
 exec(
-	'cd ../python && pipenv install && cd ./tests && pipenv run python ./runner.py',
+	'cd ../python && pipenv install && pipenv run python main.py',
 	(err, stdout, stderr) => {
 		if (err) {
 			console.log(err);
