@@ -4,23 +4,13 @@ const basePythonPath = '../python/python-exe';
 
 var window;
 //-- MAD PROPS DMzda --//
-// TODO: capture print statements in real time 
-exec(
-	'cd ../python && pipenv install && pipenv run python main.py',
-	(err, stdout, stderr) => {
-		if (err) {
-			console.log(err);
-			return;
-		}
-
-		if (stderr) {
-			console.log(stderr);
-			return;
-		}
-
-		console.log(stdout);
-	}
+let pyExec = exec(
+	'cd ../python && pipenv install && pipenv run python main.py'
 );
+
+pyExec.stdout.on('data', data => {
+	console.log(data.toString());
+});
 
 // The main.js should create windows and handle all the system events your application might encounter
 const createWindow = () => {
