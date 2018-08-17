@@ -4,6 +4,7 @@ const basePythonPath = '../python/python-exe';
 
 var window;
 //-- MAD PROPS DMzda --//
+// TODO: capture print statements in real time 
 exec(
 	'cd ../python && pipenv install && pipenv run python main.py',
 	(err, stdout, stderr) => {

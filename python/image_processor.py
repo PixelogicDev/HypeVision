@@ -1,16 +1,16 @@
 import cv2
+from datetime import datetime
 import numpy
 
 
 class ImageProcessor:
     def __init__(self):
-        self.x_end_multiplier = 0.053
+        self.x_end_multiplier = 0.051
         self.y_start_multiplier = 0.028
         self.width_multiplier = 0.928
         self.height_multiplier = 0.063
 
     def crop(self, img):
-        print('Starting crop...')
         numpy_img = numpy.array(img)
 
         height, width, _ = numpy_img.shape
@@ -19,23 +19,19 @@ class ImageProcessor:
         x_end = int(width - (width * self.x_end_multiplier))
         y_start = int(height * self.y_start_multiplier)
 
-        print('Image cropped!')
         return numpy_img[y_start:y, x:x_end]
 
     def resize(self, img):
-        print('Starting resize...')
         img_resized = cv2.resize(img, None, fx=2, fy=2,
                                  interpolation=cv2.INTER_CUBIC)
         return img_resized
 
     def blur(self, img):
-        print('Starting blur...')
         img_blur = cv2.blur(img, (5, 5))
 
         return img_blur
 
     def threshold(self, img):
-        print('Starting threshold...')
         img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
         return cv2.threshold(
@@ -54,5 +50,9 @@ class ImageProcessor:
         # Threshold
         img_altered = self.threshold(img_altered)
 
-        print('Pre-processing complete!')
+        date = str(datetime.now())
+
+        cv2.imwrite(f'./main-test/input-{date}.png', img_altered)
+        print(f'Current Img: input-{date}.png')
+
         return img_altered
