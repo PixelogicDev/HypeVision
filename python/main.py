@@ -1,3 +1,4 @@
+import json
 from image_capture import ImageCapture
 from image_processor import ImageProcessor
 from image_ocr import ImageOCR
@@ -21,18 +22,62 @@ def main():
         processed_img = img_processor.run_preprocesing(img)
 
         # OCR Image
-        value = img_ocr.predict_value(processed_img)
+        value, conf = img_ocr.predict_value(processed_img)
+
+        # {
+        #   predict: float,
+        #   conf: int,
+        #   error: {
+        #       type: Enum
+        #       message: string
+        #   }
+        # }
+        data = {}
+        error = {}
 
         if type(value) != OCRError:
-            print(f'In main: predicted value: {value}')
+            data['predict'] = value
+            data['conf'] = conf
+            data['error'] = None
+
+            json_data = json.dumps(data)
+            print(json_data)
         elif value == OCRError.NO_CONF:
-            print('In main: No conf level.')
+            data['predict'] = None
+            data['conf'] = conf
+            error['type'] = 'NO_CONF'
+            error['message'] = 'No conf level was found.'
+            data['error'] = error
+
+            json_data = json.dumps(data)
+            print(json_data)
         elif value == OCRError.LOW_CONF:
-            print('In main: No conf was too low.')
+            data['predict'] = None
+            data['conf'] = conf
+            error['type'] = 'LOW_CONF'
+            error['message'] = 'Conf level was too low.'
+            data['error'] = error
+
+            json_data = json.dumps(data)
+            print(json_data)
         elif value == OCRError.EMPTY_VAL:
-            print('In main: Value was empty.')
+            data['predict'] = None
+            data['conf'] = conf
+            error['type'] = 'EMPTY_VAL'
+            error['message'] = 'No value was found.'
+            data['error'] = error
+
+            json_data = json.dumps(data)
+            print(json_data)
         elif value == OCRError.BAD_PRED:
-            print('In main: Received bad prediction')
+            data['predict'] = None
+            data['conf'] = conf
+            error['type'] = 'BAD_PRED'
+            error['message'] = 'A bad prediction was found.'
+            data['error'] = error
+
+            json_data = json.dumps(data)
+            print(json_data)
 
 
 if __name__ == '__main__':

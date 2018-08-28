@@ -50,9 +50,9 @@ class ImageProcessor:
         # Threshold
         img_altered = self.threshold(img_altered)
 
-        date = str(datetime.now())
-
-        cv2.imwrite(f'./main-test/input-{date}.png', img_altered)
-        print(f'Current Img: input-{date}.png')
+        # Use write when testing out ocr to view images
+        # date = str(datetime.now())
+        # cv2.imwrite(f'./main-test/input-{date}.png', img_altered)
+        # print(f'Current Img: input-{date}.png')
 
         return img_altered

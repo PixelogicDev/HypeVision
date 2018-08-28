@@ -17,7 +17,7 @@ class ImageOCR:
 
         # Check confidency: >= 80 GOOD TO GO else TRASH IT
         if len(data['conf']) == 1:
-            return OCRError.NO_CONF
+            return (OCRError.NO_CONF, -1)
 
         conf_lvl = data['conf'][4]
         value = data['text'][4]
@@ -26,18 +26,17 @@ class ImageOCR:
             # Check latest_val for accuracy
             if self.latest_val == -1:
                 self.latest_val = value
-                return value
+                return (value, conf_lvl)
 
             if self.latest_val != -1 and self.latest_val >= value:
                 self.latest_val = value
-                return value
+                return (value, conf_lvl)
             elif self.latest_val < value:
-                return OCRError.BAD_PRED
+                return (OCRError.BAD_PRED, conf_lvl)
 
         else:
             if conf_lvl < 80:
-                print(f'Rejected conf level: {conf_lvl}')
-                return OCRError.LOW_CONF
+                return (OCRError.LOW_CONF, conf_lvl)
 
             if value == '':
-                return OCRError.EMPTY_VAL
+                return (OCRError.EMPTY_VAL, conf_lvl)

@@ -7,11 +7,9 @@ class ImageCapture:
 
     def yield_image_capture(self):
         while self.canCaptureImage:
-            # Take screenshot
-            print("Taking screenshot...")
+            # Use this for testing on Mac: ImageGrab.grab(bbox=(0, 53, 1680, 1627))
             img = ImageGrab.grab()
             yield img
 
     def stop_image_capture(self):
-        print('Img capture stopped.')
         self.canCaptureImage = False

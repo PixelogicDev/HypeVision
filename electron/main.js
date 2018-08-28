@@ -9,7 +9,21 @@ let pyExec = exec(
 );
 
 pyExec.stdout.on('data', data => {
-	console.log(data.toString());
+	// Parse json string
+	try {
+		json = JSON.parse(data.toString());
+
+		if (json.error !== null) {
+			console.log(`${json.error.type} (${json.conf}): ${json.error.message}`);
+			return;
+		}
+
+		if (json.predict !== null) {
+			console.log(`Prediction (${json.conf}): ${json.predict}`);
+		}
+	} catch (error) {
+		console.log(`[main.js (catch-block)]: ${data.toString()}`);
+	}
 });
 
 // The main.js should create windows and handle all the system events your application might encounter
