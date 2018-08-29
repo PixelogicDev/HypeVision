@@ -1,0 +1,23 @@
+{
+	"name": "hypevision-ui",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"react": "^16.4.2",
+		"react-dom": "^16.4.2",
+		"react-scripts": "1.1.5"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject",
+		"electron": "electron .",
+		"electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron ."
+	},
+	"main": "src/electron/main.js",
+	"homepage": "./",
+	"devDependencies": {
+		"electron": "^2.0.8"
+	}
+}
