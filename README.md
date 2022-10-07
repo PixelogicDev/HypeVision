@@ -1,6 +1,6 @@
 # HypeVision
 
-### A desktop application that plays custom songs based on the amount of players left in your PUBG match
+### A desktop application that plays music to hype you up when you need it during Apex Legends
 
 #### Table Of Contents
 
