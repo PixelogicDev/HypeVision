@@ -17,7 +17,7 @@ def get_ratio(screen_height, controller):
     print('getting screen ratio')
 
     # Set controller screen height
-    if controller.screenheight != screen_height:
+    if controller.screen_height != screen_height:
         controller.screen_height = screen_height
 
     # Supported heights = 2160, 1440, 1200, 1080
