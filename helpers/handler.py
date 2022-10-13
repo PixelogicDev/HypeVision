@@ -1,8 +1,9 @@
 # This file will contain APIs that client can call to interact with Python script
 class Controller:
-    def __init__(self, is_dev):
+    def __init__(self, is_dev=False):
         self._is_capturing = False
         self._is_dev = is_dev
+        self._screen_height = 0
 
     # is_capturing
     def get_is_capturing(self):
@@ -20,6 +21,13 @@ class Controller:
 
     def set_is_dev(self, is_dev):
         self._is_dev = is_dev
+
+    # screen_height
+    def get_screen_height(self):
+        return self._screen_height
+    
+    def set_screen_height(self, height):
+        self._screen_height = height
 
     # Properties
     is_capturing = property(get_is_capturing, start_capturing, stop_capturing)

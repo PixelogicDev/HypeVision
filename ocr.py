@@ -5,39 +5,66 @@ import pyautogui
 import time
 import numpy as np
 import helpers.handler as handler
+import os
 
+def create_dir(path):
+    dir_exists = os.path.exists(path)
 
-def crop(image, controller):
-    x1_ratio = 0.915
-    x2_ratio = 0.933
-    y1_ratio = 0.046
-    y2_ratio = 0.075
+    if not dir_exists:
+        os.mkdir(path)
 
-    # Just using this to test on macos rn
-    macos_toolbar_height = 78
+def get_ratio(screen_height, controller):
+    print('getting screen ratio')
 
+    # Set controller screen height
+    if controller.screenheight != screen_height:
+        controller.screen_height = screen_height
+
+    # Supported heights = 2160, 1440, 1200, 1080
+    if screen_height == 2160:
+        # x1, y1, x2, y2
+        return (0.866, 0.138, 0.908, 0.227)
+    elif screen_height == 1440:
+        # x1, y1, x2, y2
+        return (0.911, 0.09, 0.936, 0.15)
+    elif screen_height == 1080 or screen_height == 1200:
+        # x1, y1, x2, y2
+        return (0.932, 0.069, 0.953, 0.113)
+    else:
+        print(f'Screen height of {screen_height} not configured yet')
+
+def crop(image, controller, current_index):
+    # No matter what screensize we have, we want to crop the top right corner of the screen at 720p
+    # From here we can use the same ratio every time (hopefully)
     print('cropping')
 
     # Get current image size
     (height, width, _) = image.shape
 
-    # Create ratio'ed heights
-    x1_ratio_width = round(width * x1_ratio)
-    x2_ratio_width = round(width * x2_ratio)
-    y1_ratio_height = round(height * y1_ratio)
-    y2_ratio_height = round(height * y2_ratio)
+    # Return proper ratio based on height of screen
+    x1_ratio, y1_ratio, x2_ratio, y2_ratio = get_ratio(height, controller)
 
-    if controller.is_dev:
-        print('In dev mode, using macbook bar height')
-        y1_ratio_height = y1_ratio_height + macos_toolbar_height
-        y2_ratio_height = y2_ratio_height + macos_toolbar_height
+    # Crop image to 720p
+    crop_x1 = width - 1280
+    crop_y1 = 0
+    crop_x2 = width
+    crop_y2 = 720
 
-    # Crop image
-    cropped_image = image[y1_ratio_height: y2_ratio_height,
-                          x1_ratio_width: x2_ratio_width]
+    cropped_720p = image[crop_y1: crop_y2, crop_x1: crop_x2]
+    create_dir(f'captures/{current_index}')
+    cv2.imwrite(f'captures/{current_index}/720p.png', cropped_720p)
+
+    # Take 720p image and crop based on ratio
+    (cropped_height, cropped_width, _) = cropped_720p.shape
+    x1_ratio_width = round(cropped_width * x1_ratio)
+    x2_ratio_width = round(cropped_width * x2_ratio)
+    y1_ratio_height = round(cropped_height * y1_ratio)
+    y2_ratio_height = round(cropped_height * y2_ratio)
+
+    player_count_crop = cropped_720p[y1_ratio_height: y2_ratio_height, x1_ratio_width: x2_ratio_width]
 
     # Return cropped image
-    return cropped_image
+    return player_count_crop
 
 
 def clean(cropped_image, current_index):
@@ -46,16 +73,14 @@ def clean(cropped_image, current_index):
     # Convert to grayscale
     gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
 
-    # Remove noise
-    # gray_no_noise = cv2.medianBlur(gray, 5)
-
     # Threshold
     gray_no_noise_threshold = cv2.threshold(
         gray, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
     # Saved cleaned image
+    create_dir(f'captures/{current_index}')
     cv2.imwrite(
-        f'captures/cleaned-{current_index}.png', gray_no_noise_threshold)
+        f'captures/{current_index}/cleaned-{current_index}.png', gray_no_noise_threshold)
 
     return gray_no_noise_threshold
 
@@ -68,7 +93,8 @@ def predict(clean_image):
 
 
 def capture_screen(current_index):
-    program = 'QuickTime Player'
+    # program = 'QuickTime Player'
+    program = "r5apex.exe"
 
     found = program in (i.name() for i in psutil.process_iter())
 
@@ -84,20 +110,22 @@ def capture_screen(current_index):
     screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
     # Write to disk for reference (testing only)
-    cv2.imwrite(f'captures/screenshot-{current_index}.png', screenshot)
+    create_dir(f'captures/{current_index}')
+    cv2.imwrite(f'captures/{current_index}/screenshot-{current_index}.png', screenshot)
 
     return (screenshot, current_index + 1)
 
 
 current_index = 1
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 
 # Start capturing
-controller = handler.Controller(is_dev=True)
+controller = handler.Controller()
 controller.start_capturing()
 
 while (controller.is_capturing):
     # Take screenshot
-    (screenshot, next_index) = capture_screen(current_index)
+    screenshot, next_index = capture_screen(current_index)
 
     if len(screenshot) == 0:
         print('Application not open, checking in 5 seconds')
@@ -105,8 +133,7 @@ while (controller.is_capturing):
         continue
 
     # Load & crop image
-    # test_image1 = cv2.imread('test.png')
-    cropped_image = crop(screenshot, controller)
+    cropped_image = crop(screenshot, controller, current_index)
     print('cropping complete')
 
     # Clean image
@@ -119,9 +146,7 @@ while (controller.is_capturing):
     # Send off to client
     print(f'#{current_index}: {value}')
 
-    if current_index == 10:
-        controller.stop_capturing()
-    else:
-        current_index = next_index
-        # Cool down for 5 seconds
-        time.sleep(5)
+    current_index = next_index
+
+    # Cool down for 5 seconds
+    time.sleep(5)
