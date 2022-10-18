@@ -93,12 +93,11 @@ def predict(clean_image):
 
 
 def capture_screen(current_index):
-    # program = 'QuickTime Player'
     program = "r5apex.exe"
 
     found = program in (i.name() for i in psutil.process_iter())
 
-    if found == False:
+    if not found:
         print(f'{program} is not running')
         return ([], current_index)
 
@@ -110,18 +109,21 @@ def capture_screen(current_index):
     screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
     # Write to disk for reference (testing only)
-    create_dir(f'captures/{current_index}')
-    cv2.imwrite(f'captures/{current_index}/screenshot-{current_index}.png', screenshot)
+    if controller.is_dev:
+        create_dir(f'captures/{current_index}')
+        cv2.imwrite(f'captures/{current_index}/screenshot-{current_index}.png', screenshot)
 
     return (screenshot, current_index + 1)
 
-
 current_index = 1
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 
 # Start capturing
-controller = handler.Controller()
+controller = handler.Controller(is_dev=True)
 controller.start_capturing()
+
+# Only point to path if in dev
+if controller.is_dev:
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 
 while (controller.is_capturing):
     # Take screenshot

@@ -32,3 +32,4 @@ class Controller:
     # Properties
     is_capturing = property(get_is_capturing, start_capturing, stop_capturing)
     is_dev = property(get_is_dev, set_is_dev)
+    screen_height = property(get_screen_height, set_screen_height)
