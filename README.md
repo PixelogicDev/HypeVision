@@ -35,3 +35,9 @@ All contributing will be done through Github Issues. If you have a bug/improveme
 ### Thank you
 
 **_Coming Soon_**
+
+### Notes
+Running venv
+1. cd python
+2. pip install -r requirements.txt
+3. venv/Scripts/activate
