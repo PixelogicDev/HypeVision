@@ -1,7 +1,9 @@
 .DS_Store
-captures/
 __pycache__/
 *.py[cod]
+captures/*
+venv
+tesseract
 
 # Logs
 logs
